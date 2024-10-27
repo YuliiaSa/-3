@@ -1,0 +1,117 @@
+// 1 ГОЛОВНИЙ ФАЙЛ
+package org.example;
+
+import net.thauvin.erik.crypto.CryptoPrice;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+
+
+public class Main {
+    public static void main(String[] args) throws Exception {
+        var api = new TelegramBotsApi(DefaultBotSession.class);
+        api.registerBot(new MyBot());
+
+
+
+
+    }
+}
+
+
+
+
+
+
+
+// 2 БОТ ФАЙЛ
+package org.example;
+
+import net.thauvin.erik.crypto.CryptoPrice;
+import net.thauvin.erik.crypto.CryptoPrice.Companion.*;
+import net.thauvin.erik.crypto.CryptoException.Companion.*;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+public class MyBot extends TelegramLongPollingBot {
+    public MyBot() {
+
+        super ("7880952999:AAG-WFgyd7Xv9YCwESRMP0vGvOeZ-xufQ9o");
+    }
+    @Override
+    public void onUpdateReceived(Update update) {
+        var chatId = update.getMessage().getChatId();
+        var text = update.getMessage().getText();
+//        int chislo =  Integer.parseInt(update.getMessage().getText());
+
+//        int i = Integer.parseInt (text);
+//        System.out.println(i/6);
+
+        try {
+            var message = new SendMessage();
+            message.setChatId(chatId);
+
+           if (text.equals("/start")) {
+                message.setText("Hello!");
+           } else if (text.equals("btc")) {
+               var priceBTC = CryptoPrice.spotPrice ("BTC");
+                message.setText("BTC price: " + priceBTC.getAmount().doubleValue());
+
+           }else if (text.equals("eth")) {
+               var priceETH = CryptoPrice.spotPrice("ETH");
+               message.setText("ETH price: " + priceETH.getAmount().doubleValue());
+
+           }else if (text.equals("doge")) {
+               var priceDOG = CryptoPrice.spotPrice("DOGE");
+               message.setText("DOGE price: " + priceDOG.getAmount().doubleValue());
+           }else if (text.equals("/all")) {
+               var priceBTC = CryptoPrice.spotPrice("BTC");
+               var priceETH = CryptoPrice.spotPrice("ETH");
+               var priceDOG = CryptoPrice.spotPrice("DOGE");
+               message.setText("BTC price: " + priceBTC.getAmount().doubleValue() + "\nETH price: " + priceETH.getAmount().doubleValue() + "\nDOGE price: " + priceDOG.getAmount().doubleValue());
+//           }else if (text.equals("/suma")) {
+//               message.setText ("Введіть сумму яка у вас є грошей?");
+//               var chislo = update.getMessage().getText();
+//               int i = Integer.parseInt (chislo);
+//               System.out.println(i/6);
+           } else if (text.equals("/suma")) {
+               message.setText("Cкільки у вас є грошей?");
+//               var chatId = update.getMessage().getChatId();
+
+//               System.out.println(chislo);
+
+//               var chislo = update.getMessage().getText();
+//               int i = Integer.parseInt (text);
+//               System.out.println(text);
+//               System.out.println(i/6);
+//               message.setText("ETH price: " + priceETH.getAmount().doubleValue());
+//
+//               message.setText("DOGE price: " + priceDOG.getAmount().doubleValue());
+           } else if (Integer.parseInt (text)>0) {
+               System.out.println("+");
+               var priceBTC = CryptoPrice.spotPrice("BTC");
+               var priceETH = CryptoPrice.spotPrice("ETH");
+               var priceDOG = CryptoPrice.spotPrice("DOGE");
+
+
+               message.setText("Ти можеш купити BTC: " + Integer.parseInt (text)/(priceBTC.getAmount().doubleValue()) + "\nТи можеш купити ETH: " + Integer.parseInt (text)/(priceETH.getAmount().doubleValue()) + "\nТи можеш купити DOGE: " + Integer.parseInt (text)/(priceDOG.getAmount().doubleValue()));
+           } else {
+               message.setText("Unknown command!");
+           }
+
+
+               execute(message);
+        } catch (Exception e) {
+            System.out.println("Error!");
+
+        }
+
+
+    }
+
+    @Override
+    public String getBotUsername() {
+        return "CryptoYuliia_bot";
+    }
+}
